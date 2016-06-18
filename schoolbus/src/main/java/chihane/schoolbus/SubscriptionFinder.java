@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodFinder {
+public class SubscriptionFinder {
     public static List<Subscription> find(Object subscriber) {
         List<Subscription> result = new ArrayList<>();
 

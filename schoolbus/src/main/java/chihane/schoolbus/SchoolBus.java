@@ -12,7 +12,7 @@ public class SchoolBus {
     public static final SchoolBus defaultInstance = new SchoolBus();
 
     public void register(Object subscriber) {
-        List<Subscription> subscriptions = MethodFinder.find(subscriber);
+        List<Subscription> subscriptions = SubscriptionFinder.find(subscriber);
 
         for (Subscription subscription : subscriptions) {
             List<Subscription> subscriptionsByType = typeToSubscriptions.get(subscription.eventType);
