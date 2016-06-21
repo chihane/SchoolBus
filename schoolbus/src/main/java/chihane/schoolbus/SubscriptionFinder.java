@@ -20,7 +20,8 @@ public class SubscriptionFinder {
                         throw new SchoolBusException("One and only one event type must declared as @Subscriber methods' parameter");
                     }
                     Class eventType = parameterTypes[0];
-                    result.add(new Subscription(subscriber, method, eventType));
+
+                    result.add(new Subscription(subscriber, method, eventType, ((Subscribe) annotation).threadMode()));
                 }
             }
         }

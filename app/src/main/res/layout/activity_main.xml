@@ -11,6 +11,7 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/button"
         android:text="Hello World!"
         android:layout_width="match_parent"
         android:onClick="onClick"

@@ -1,14 +1,13 @@
 package chihane.schoolbus;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class SchoolBus {
-    private static final Map<Class, List<Subscription>> typeToSubscriptions = new HashMap<>();
-    private static final Map<Object, List<Class>> subscriberToType = new HashMap<>();
+    private final Map<Class, List<Subscription>> typeToSubscriptions = new HashMap<>();
+    private final Map<Object, List<Class>> subscriberToType = new HashMap<>();
 
     private static final class DefaultInstanceKeeper {
         private static final SchoolBus INSTANCE = new SchoolBus();
@@ -51,12 +50,22 @@ public class SchoolBus {
     }
 
     private void postEvent(Subscription subscription, Object event) {
-        try {
-            subscription.method.invoke(subscription.subscriber, event);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        switch (subscription.threadMode) {
+            case MAIN:
+                MainThreadPoster.post(subscription, event);
+                break;
+            case BACKGROUND:
+                BackgroundThreadPoster.post(subscription, event);
+                break;
+            case POSTING:
+                PostingThreadPoster.post(subscription, event);
+                break;
+            case ASYNC:
+                AsyncThreadPoster.post(subscription, event);
+                break;
+            default:
+                PostingThreadPoster.post(subscription, event);
+                break;
         }
     }
 
