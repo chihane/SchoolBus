@@ -10,7 +10,13 @@ public class SchoolBus {
     private static final Map<Class, List<Subscription>> typeToSubscriptions = new HashMap<>();
     private static final Map<Object, List<Class>> subscriberToType = new HashMap<>();
 
-    public static final SchoolBus defaultInstance = new SchoolBus();
+    private static final class DefaultInstanceKeeper {
+        private static final SchoolBus INSTANCE = new SchoolBus();
+    }
+
+    public static SchoolBus getDefault() {
+        return DefaultInstanceKeeper.INSTANCE;
+    }
 
     public void register(Object subscriber) {
         List<Class> types = subscriberToType.get(subscriber);

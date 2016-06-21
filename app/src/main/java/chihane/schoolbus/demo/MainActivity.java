@@ -14,13 +14,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SchoolBus.defaultInstance.register(this);
+        SchoolBus.getDefault().register(this);
     }
 
     public void onClick(View view) {
-        SchoolBus.defaultInstance.post(new DefaultEvent("testtesttest"));
-        if (SchoolBus.defaultInstance.isRegistered(this)) {
-            SchoolBus.defaultInstance.unregister(this);
+        SchoolBus.getDefault().post(new DefaultEvent("testtesttest"));
+        if (SchoolBus.getDefault().isRegistered(this)) {
+            SchoolBus.getDefault().unregister(this);
         } else {
             Toast.makeText(MainActivity.this, "unregistered", Toast.LENGTH_SHORT).show();
         }
