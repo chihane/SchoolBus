@@ -19,6 +19,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClick(View view) {
         SchoolBus.defaultInstance.post(new DefaultEvent("testtesttest"));
+        if (SchoolBus.defaultInstance.isRegistered(this)) {
+            SchoolBus.defaultInstance.unregister(this);
+        } else {
+            Toast.makeText(MainActivity.this, "unregistered", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Subscribe

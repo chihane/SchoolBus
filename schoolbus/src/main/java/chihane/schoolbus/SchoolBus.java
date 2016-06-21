@@ -8,13 +8,22 @@ import java.util.Map;
 
 public class SchoolBus {
     private static final Map<Class, List<Subscription>> typeToSubscriptions = new HashMap<>();
+    private static final Map<Object, List<Class>> subscriberToType = new HashMap<>();
 
     public static final SchoolBus defaultInstance = new SchoolBus();
 
     public void register(Object subscriber) {
+        List<Class> types = subscriberToType.get(subscriber);
+        if (types == null) {
+            types = new ArrayList<>();
+            subscriberToType.put(subscriber, types);
+        }
+
         List<Subscription> subscriptions = SubscriptionFinder.find(subscriber);
 
         for (Subscription subscription : subscriptions) {
+            types.add(subscription.eventType);
+
             List<Subscription> subscriptionsByType = typeToSubscriptions.get(subscription.eventType);
 
             if (subscriptionsByType == null) {
@@ -43,5 +52,28 @@ public class SchoolBus {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isRegistered(Object subscriber) {
+        return subscriberToType.containsKey(subscriber);
+    }
+
+    public void unregister(Object subscriber) {
+        List<Class> types = subscriberToType.get(subscriber);
+
+        if (types == null) {
+            throw new SchoolBusException("Subscriber unregistering was not registered before");
+        }
+
+        for (Class type : types) {
+            List<Subscription> subscriptions = typeToSubscriptions.get(type);
+            for (Subscription subscription : subscriptions) {
+                if (subscription.subscriber == subscriber) {
+                    subscriptions.remove(subscription);
+                }
+            }
+        }
+
+        subscriberToType.remove(subscriber);
     }
 }

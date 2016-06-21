@@ -16,8 +16,8 @@ public class SubscriptionFinder {
             for (Annotation annotation : annotations) {
                 if (annotation.annotationType() == Subscribe.class) {
                     Class[] parameterTypes = method.getParameterTypes();
-                    if (parameterTypes.length == 0) {
-                        throw new SchoolBusException("Event type must declared as @Subscriber methods' parameter");
+                    if (parameterTypes.length != 1) {
+                        throw new SchoolBusException("One and only one event type must declared as @Subscriber methods' parameter");
                     }
                     Class eventType = parameterTypes[0];
                     result.add(new Subscription(subscriber, method, eventType));
