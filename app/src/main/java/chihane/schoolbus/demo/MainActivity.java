@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
     }
 
-    @Subscribe(threadMode = ThreadMode.ASYNC)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(DefaultEvent event) {
         Log.d(TAG, "Subscriber thread id: " + Thread.currentThread().getId() + "");
         Toast.makeText(MainActivity.this, event.message, Toast.LENGTH_SHORT).show();
