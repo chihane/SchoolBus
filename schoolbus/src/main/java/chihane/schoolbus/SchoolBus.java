@@ -9,6 +9,8 @@ public class SchoolBus {
     private final Map<Class, List<Subscription>> typeToSubscriptions = new HashMap<>();
     private final Map<Object, List<Class>> subscriberToType = new HashMap<>();
 
+    private final Map<Class, List<Object>> stickyEvents = new HashMap<>();
+
     private static final class DefaultInstanceKeeper {
         private static final SchoolBus INSTANCE = new SchoolBus();
     }
@@ -37,15 +39,45 @@ public class SchoolBus {
             }
 
             subscriptionsByType.add(subscription);
+
+            if (subscription.sticky) {
+                dispatchStickyEvent(subscription.eventType);
+            }
         }
     }
 
     public void post(Object event) {
+        if (typeToSubscriptions.isEmpty()) {
+            return;
+        }
+
         Class eventType = event.getClass();
         List<Subscription> subscriptions = typeToSubscriptions.get(eventType);
 
         for (Subscription subscription : subscriptions) {
             postEvent(subscription, event);
+        }
+    }
+
+    public void postSticky(Object event) {
+        List<Object> events = stickyEvents.get(event.getClass());
+        if (events == null) {
+            events = new ArrayList<>();
+            stickyEvents.put(event.getClass(), events);
+        }
+
+        events.add(event);
+
+        post(event);
+    }
+
+    private void dispatchStickyEvent(Class eventType) {
+        List<Object> events = stickyEvents.get(eventType);
+        if (events != null) {
+            for (Object event : events) {
+                post(event);
+                events.remove(event);
+            }
         }
     }
 
@@ -57,12 +89,10 @@ public class SchoolBus {
             case BACKGROUND:
                 BackgroundThreadPoster.post(subscription, event);
                 break;
-            case POSTING:
-                PostingThreadPoster.post(subscription, event);
-                break;
             case ASYNC:
                 AsyncThreadPoster.post(subscription, event);
                 break;
+            case POSTING:
             default:
                 PostingThreadPoster.post(subscription, event);
                 break;

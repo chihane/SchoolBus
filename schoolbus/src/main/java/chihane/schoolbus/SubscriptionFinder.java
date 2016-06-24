@@ -21,7 +21,8 @@ public class SubscriptionFinder {
                     }
                     Class eventType = parameterTypes[0];
 
-                    result.add(new Subscription(subscriber, method, eventType, ((Subscribe) annotation).threadMode()));
+                    Subscribe subscribe = (Subscribe) annotation;
+                    result.add(new Subscription(subscriber, method, eventType, subscribe.threadMode(), subscribe.sticky()));
                 }
             }
         }

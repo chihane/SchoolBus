@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Subscribe {
     ThreadMode threadMode() default ThreadMode.POSTING;
+
+    boolean sticky() default false;
 }
